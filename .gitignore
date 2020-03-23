@@ -1,0 +1,16 @@
+﻿# игнорируем папку
+results
+statistics
+sport_videos
+Towards-Realtime-MOT
+Towards-Realtime-MOT-master
+*/.idea
+*/__pycache__
+
+# игнорируем файл
+*.avi
+*.mp4
+*.wmv
+*.txt
+*.jpg
+*.png
