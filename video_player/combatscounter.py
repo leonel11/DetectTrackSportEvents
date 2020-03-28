@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from collections import defaultdict
 from tqdm import tqdm
 
@@ -84,6 +85,8 @@ class CombatsCounter():
             for j in range(len(self.__ids)):
                 ax.text(j, i, self.__combatsmatrix[i, j], ha='center', va='center', color='w')
         plt.savefig(os.path.join(self.__outdirectory, 'combats_matrix.png'))
+        return go.Heatmap(z=self.__combatsmatrix, x=self.__ids, y=self.__ids, xgap=1, ygap=1, hoverongaps=False,
+                          hovertemplate='i: %{x}<br>j: %{y}<br>combat: %{z}<br>', name='', colorscale='Viridis')
 
 
     def __drawBarChartHumanCombats(self):
@@ -104,6 +107,7 @@ class CombatsCounter():
             ax.set_title('Covered distances by players')
             ax.set_ylabel('Pixels')
             fig.savefig(os.path.join(self.__outdirectory, 'combats___human_{}.png'.format(self.__human)))
+            return go.Bar(x=np.arange(len(d)), y=list(d.values()), marker={'color': 'royalblue'})
 
 
     def calculateCombatsStatistics(self):
@@ -113,11 +117,12 @@ class CombatsCounter():
         print('Calculate statistics about combats...')
         self.__buildCombatsMatrix()
         if self.__human is None:
-            self.__drawCombatsMatrix()
+            plotly_object = self.__drawCombatsMatrix()
         else:
             self.__buildHumanCombatsDictionary()
-            self.__drawBarChartHumanCombats()
+            plotly_object = self.__drawBarChartHumanCombats()
         print('Success!')
+        return plotly_object
 
 
 def init_argparse():

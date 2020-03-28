@@ -1,6 +1,7 @@
 import argparse
 import os
 import pandas as pd
+import plotly.graph_objects as go
 from PIL import Image
 
 import constants
@@ -42,12 +43,14 @@ class MotionHeatmap():
             if not os.path.exists(self.__outdirectory):
                 os.makedirs(self.__outdirectory)
             if self.__human is not None:
-                heatmap_img.save(os.path.join(self.__outdirectory, 'heatmap___human_{}.png'.format(self.__human)))
+                heatmap_imgname = os.path.join(self.__outdirectory, 'heatmap___human_{}.png'.format(self.__human))
             else:
-                heatmap_img.save(os.path.join(self.__outdirectory, 'heatmap.png'))
+                heatmap_imgname = os.path.join(self.__outdirectory, 'heatmap.png')
+            heatmap_img.save(heatmap_imgname)
             print('Success!')
         else:
             print('Fail...')
+        return heatmap_img
 
 
 def init_argparse():

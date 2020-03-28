@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from PIL import Image
 from collections import defaultdict
 from scipy.spatial import distance
@@ -34,8 +35,9 @@ class MotionTrajectories:
         '''
         print('Calculate statistics about movement...')
         self.__drawTrajectories()
-        self.__saveResults()
+        trajectories_imgnames = self.__saveResults()
         print('Success!')
+        return trajectories_imgnames
 
 
     def __drawTrajectories(self):
@@ -73,7 +75,9 @@ class MotionTrajectories:
         ax.invert_yaxis()  # labels read top-to-bottom
         ax.set_title('Covered distances by players')
         ax.set_xlabel('Pixels')
-        fig.savefig(os.path.join(self.__outdirectory, 'covered_distances.png'))
+        fig.savefig(os.path.join(self.__outdirectory, 'covered_distances___{}.png'.format(self.__human)))
+        return go.Bar(x=list(d.values()), y=list(map(str, d.keys())), orientation='h', name='',
+                      marker={'color': 'royalblue'})
 
 
     def __saveResults(self):
@@ -84,15 +88,15 @@ class MotionTrajectories:
             os.makedirs(self.__outdirectory)
         if self.__human is None:
             Image.fromarray(self.__background).save(os.path.join(self.__outdirectory, 'trajectories.png'))
+            plotly_object = self.__drawBarChartDistances()
+            return plotly_object
         else:
             Image.fromarray(self.__background).save(os.path.join(self.__outdirectory,
                                                                  'trajectories___{}.png'.format(self.__human)))
-        if self.__human is not None:
             json_filename = 'covered_distance___human_{}.json'.format(self.__human)
             with open(os.path.join(self.__outdirectory, json_filename), 'w') as fp:
                 json.dump(self.__distances, fp)
-        else:
-            self.__drawBarChartDistances()
+            return None
 
 
 def init_argparse():
