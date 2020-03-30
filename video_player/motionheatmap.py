@@ -1,7 +1,6 @@
 import argparse
 import os
 import pandas as pd
-import plotly.graph_objects as go
 from PIL import Image
 
 import constants
@@ -11,8 +10,18 @@ from traceplace import Traceplace
 
 
 class MotionHeatmap():
+    '''
+    Implement class of building heamap of motion for detected and tracked players
+    '''
 
     def __init__(self, markup_file, out_dir, human_number=None, marker_pos='lower_center'):
+        '''
+        Constructor
+        :param markup_file: file with saved information about bboxes, ids of humans on each frame of video
+        :param out_dir: directory for saving results
+        :param human_number: id of human to count combats with other players (None - count combats for each player)
+        :param marker_pos: marker of location of key points on bboxes to build a heatmap
+        '''
         self.__data = pd.read_csv(markup_file, names=['frame', 'id', 'bb_y', 'bb_x', 'bb_h', 'bb_w'])
         self.__outdirectory = out_dir
         self.__background = Image.open(constants.BACKGROUND_READY_IMAGE)
@@ -33,7 +42,8 @@ class MotionHeatmap():
 
     def buildHeatmap(self):
         '''
-        Build heatmap of movement using coordinates of vertices of bounding boxes
+        Build a heatmap of motion using coordinates of vertices of bounding boxes
+        :return: heatmap of motion as an image
         '''
         print('Building the heatmap of motion...')
         self.__loadPoints()
@@ -42,6 +52,7 @@ class MotionHeatmap():
         if heatmap_img is not None:
             if not os.path.exists(self.__outdirectory):
                 os.makedirs(self.__outdirectory)
+            # Save a heatmap as an image
             if self.__human is not None:
                 heatmap_imgname = os.path.join(self.__outdirectory, 'heatmap___human_{}.png'.format(self.__human))
             else:
@@ -49,13 +60,14 @@ class MotionHeatmap():
             heatmap_img.save(heatmap_imgname)
             print('Success!')
         else:
-            print('Fail...')
+            heatmap_img = self.__background
+            print('Fail... Heatmap was not built!')
         return heatmap_img
 
 
 def init_argparse():
     '''
-    Initializes argparse
+    Initialize argparse
     '''
     parser = argparse.ArgumentParser(description='Build heatmap of movement')
     parser.add_argument(
@@ -89,9 +101,9 @@ def main():
     parser = init_argparse()
     # Extract arguments of script
     args = parser.parse_args()
-    # Building heatmap of motions
-    mh = MotionHeatmap(markup_file=args.markup, out_file=args.out_dir,
-                       human_number=args.human, marker_pos=args.traceplace)
+    # Building a heatmap of motion
+    mh = MotionHeatmap(markup_file=args.markup, out_file=args.out_dir, human_number=args.human,
+                       marker_pos=args.traceplace)
     mh.buildHeatmap()
 
 

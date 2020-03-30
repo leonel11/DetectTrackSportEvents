@@ -33,7 +33,7 @@ class MotionTrajectories:
         '''
         Calculate statistics about trajectories of movement
         '''
-        print('Calculate statistics about movement...')
+        print('Calculate statistics about paths of movement...')
         self.__drawTrajectories()
         trajectories_imgnames = self.__saveResults()
         print('Success!')
@@ -75,7 +75,7 @@ class MotionTrajectories:
         ax.invert_yaxis()  # labels read top-to-bottom
         ax.set_title('Covered distances by players')
         ax.set_xlabel('Pixels')
-        fig.savefig(os.path.join(self.__outdirectory, 'covered_distances___{}.png'.format(self.__human)))
+        fig.savefig(os.path.join(self.__outdirectory, 'covered_distances.png'))
         return go.Bar(x=list(d.values()), y=list(map(str, d.keys())), orientation='h', name='',
                       marker={'color': 'royalblue'})
 
@@ -96,7 +96,13 @@ class MotionTrajectories:
             json_filename = 'covered_distance___human_{}.json'.format(self.__human)
             with open(os.path.join(self.__outdirectory, json_filename), 'w') as fp:
                 json.dump(self.__distances, fp)
-            return None
+            return go.Figure()
+
+
+    def getDistance(self, human_id):
+        if human_id in self.__distances.keys():
+            return self.__distances[human_id]
+        return 0.0
 
 
 def init_argparse():

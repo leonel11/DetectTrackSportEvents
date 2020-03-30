@@ -1,3 +1,8 @@
+'''
+Based on utils.datasets.py, utils.visualization.py, demo.py, track.py
+from project Towards-Realtime-MOT (https://github.com/Zhongdao/Towards-Realtime-MOT)
+'''
+
 import os
 import logging
 import argparse
@@ -20,19 +25,26 @@ class MOTTracker:
     '''
 
     def __init__(self, input_video, gpu_number):
+        '''
+        Constructor
+        :param input_video: video for tracking objects
+        :param gpu_number: GPU number of videocard to launch algorithm of detection and tracking
+        '''
         os.makedirs(constants.RESULTS_FOLDER, exist_ok=True)
         self.__video = input_video
         self.__gpu = gpu_number
+        # Adjust names for saving information about tracking
         basename = os.path.splitext(os.path.basename(self.__video))[0]
         self.__markupfile = os.path.join(constants.RESULTS_FOLDER, str(basename)+'.txt')
         self.__markedvideo = os.path.join(constants.RESULTS_FOLDER, str(basename)+'.avi')
+        # directory for saving marked frames of video with tracking objects
         self.__framedir = os.path.join(constants.RESULTS_FOLDER, str(basename))
         os.makedirs(self.__framedir, exist_ok=True)
 
 
     def __adjustTracker(self):
         '''
-        Load video as a set of frames into this class for tracking
+        Load video as a set of frames
         '''
         logger.setLevel(logging.INFO)
         logger.info('Loading video...')
@@ -76,7 +88,7 @@ class MOTTracker:
 
     def __writeTrackingResults(self, results):
         '''
-        Save results of tracked bounding boxes into text-file
+        Save results of tracked bboxes into file of markup
         :param results: list, which contains information about frames, detected humans and vertices of bounding boxes
         '''
         with open(self.__markupfile, 'w') as f:
@@ -86,6 +98,7 @@ class MOTTracker:
                         continue
                     x1, y1, w, h = tlwh
                     x2, y2 = x1 + w, y1 + h
+                    # frame_number, id_human, coordinates x, y of top left and bottom right corners of bbox
                     line = '{frame},{id},{x1},{y1},{w},{h}\n'.format(frame=frame_id, id=track_id,
                                                                      x1=x1, y1=y1, x2=x2, y2=y2, w=w, h=h)
                     f.write(line)
@@ -94,7 +107,7 @@ class MOTTracker:
 
     def __collectArgumentParserParams(self):
         '''
-        Collect parameters for JDE Tracker as argparse object
+        Collect parameters for JDE Tracker as a collected argparse object
         :return: argparse object with parameters
         '''
         parser.add_argument('--cfg', type=str, default=constants.TRACKER_CONFIG)
@@ -122,7 +135,7 @@ class MOTTracker:
         for path, img, img0 in self.__dataloader:
             if frame_id % 20 == 0:
                 logger.info('Processing frame {} ({:.2f} fps)'.format(frame_id, 1./max(1e-5, timer.average_time)))
-            # run tracking
+            # Run tracking
             timer.tic()
             blob = torch.from_numpy(img).cuda().unsqueeze(0)
             online_targets = tracker.update(blob, img0)
@@ -133,17 +146,17 @@ class MOTTracker:
                     online_tlwhs.append(tlwh)
                     online_ids.append(tid)
             timer.toc()
-            # save results
+            # Save results
             results.append((frame_id, online_tlwhs, online_ids))
             online_img = self.__plotTracking(img0, online_tlwhs, online_ids, frame_id=frame_id)
-            cv2.imwrite(os.path.join(self.__framedir, '{:05d}.jpg'.format(frame_id)), online_img)
+            cv2.imwrite(os.path.join(self.__framedir, '{:05d}.jpg'.format(frame_id)), online_img) # save marked frame
             frame_id += 1
         self.__writeTrackingResults(results)
 
 
     def __plotTracking(self, img, tlwhs, obj_ids, frame_id=0, ids2=None):
         '''
-        Plot tracked bounding boxes for the frame of video
+        Plot tracked bboxes for the frame of video
         :param img: frame of video
         :return: frame with tracked bounding boxes
         '''
@@ -151,8 +164,10 @@ class MOTTracker:
         text_scale = max(1, img.shape[1]/1500.0)
         text_thickness = 1 if text_scale > 1.1 else 1
         line_thickness = max(1, int(img.shape[1]/500.0))
+        # Draw information about the number of frame and an amount of detected humans
         cv2.putText(img, 'frame: {}   humans: {}'.format(frame_id, len(tlwhs)), (0, int(15*text_scale)),
                     cv2.FONT_HERSHEY_PLAIN, text_scale, color=(0, 0, 255), thickness=2)
+        # Draw bboxes
         for i, tlwh in enumerate(tlwhs):
             x1, y1, w, h = tlwh
             bbox = tuple(map(int, (x1, y1, x1+w, y1+h)))
@@ -160,7 +175,9 @@ class MOTTracker:
             id_text = '{}'.format(int(obj_id))
             if ids2 is not None:
                 id_text = id_text + ', {}'.format(int(ids2[i]))
+            # Draw rectangle of bbox
             cv2.rectangle(img, bbox[0:2], bbox[2:4], color=operations.get_color(abs(obj_id)), thickness=line_thickness)
+            # Draw id of detected human
             cv2.putText(img, id_text, (bbox[0], bbox[1]+30), cv2.FONT_HERSHEY_PLAIN, text_scale,
                         color=(0, 0, 255), thickness=text_thickness)
         return img
@@ -168,7 +185,7 @@ class MOTTracker:
 
 def init_argparse():
     '''
-    Initializes argparse
+    Initialize argparse
     '''
     parser = argparse.ArgumentParser(description='Multiple Object Tracking')
     parser.add_argument(

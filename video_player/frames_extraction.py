@@ -8,7 +8,7 @@ FRAME_SIZE = (810, 608)
 
 def init_argparse():
     '''
-    Initializes argparse
+    Initialize argparse
     '''
     parser = argparse.ArgumentParser(description='Frames extraction from the video')
     parser.add_argument(
@@ -35,14 +35,13 @@ def extract_frames(input_video, output_directory):
     cap = cv2.VideoCapture(input_video)
     n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     frame_id = 1
-    if not os.path.exists(output_directory): # check the existance of output directory
+    if not os.path.exists(output_directory): # check the existence of output directory
         os.makedirs(output_directory)
-    # Extract frames
     while frame_id <= n_frames:
-        res, img0 = cap.read()
+        res, img0 = cap.read() # extract frames
         if img0 is not None:
-            img0 = cv2.resize(img0, FRAME_SIZE, interpolation = cv2.INTER_AREA)
-            cv2.imwrite(os.path.join(output_directory, '{:05d}.jpg'.format(frame_id)), img0)
+            img0 = cv2.resize(img0, FRAME_SIZE, interpolation = cv2.INTER_AREA) # resize extracted frame
+            cv2.imwrite(os.path.join(output_directory, '{:05d}.jpg'.format(frame_id)), img0) # save frame
             if frame_id % 20 == 0:
                 print('{} frames'.format(frame_id))
         else:

@@ -9,13 +9,15 @@ from collections import defaultdict
 
 def get_color(idx):
     idx = idx*3
-    color = (np.asscalar(np.int16((37*idx) % 255)), np.asscalar(np.int16((17*idx) % 255)), np.asscalar(np.int16((29*idx) % 255)))
+    color = (np.asscalar(np.int16((37*idx) % 255)),
+             np.asscalar(np.int16((17*idx) % 255)),
+             np.asscalar(np.int16((29*idx) % 255)))
     return color
 
 
 def init_argparse():
     '''
-    Initializes argparse
+    Initialize argparse
     '''
     parser = argparse.ArgumentParser(description='Background extraction from the video')
     parser.add_argument(
@@ -99,7 +101,7 @@ def main():
         else:
             for id in ids:
                 last_appearance[id] = frame_id
-    df.to_csv('1.txt', sep=',', index=False, header=False)
+    df.to_csv('postprocessing.txt', sep=',', index=False, header=False)
 
 
 if __name__ == '__main__':

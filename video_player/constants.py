@@ -1,3 +1,4 @@
+# E-mail information about the sender
 SENT_FROM_USER = 'sportaisystemyar@gmail.com'
 SENT_FROM_PASSWORD = 'matveevdv_ivanovskyli'
 

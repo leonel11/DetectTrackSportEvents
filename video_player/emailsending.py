@@ -6,15 +6,21 @@ import constants
 
 
 class EMailSending:
+    '''
+    Implement class of sending e-mail with attached files of calculated statistics
+    '''
 
     def __init__(self):
+        '''
+        Constructor
+        '''
         self.__fromuser = constants.SENT_FROM_USER
         self.__frompassword = constants.SENT_FROM_PASSWORD
 
 
     def sendEMail(self, to_users: list, attached_files_paths: list):
         '''
-        Send files as an e-mail to recipients
+        Send an e-mail with attached files to recipients
         :param to_users: recipients of e-mail
         :param attached_files_paths: files for sending
         '''
@@ -28,7 +34,7 @@ class EMailSending:
 
 def init_argparse():
     '''
-    Initializes argparse
+    Initialize argparse
     '''
     parser = argparse.ArgumentParser(description='Sending statistics by the use of e-mail')
     parser.add_argument(

@@ -24,10 +24,10 @@ def get_color(human_number):
 
 def get_point(row_dataframe, marker_pos):
     '''
-    Get point of bounding box according to strategy of point choice
-    :param row_dataframe: row of dataframe which stores vertices of bounding box
-    :param marker_pos: strategy of point choice
-    :return: point of bounding box
+    Get point of bbox according to marker (strategy of point choice on bbox)
+    :param row_dataframe: row of dataframe which stores vertices of bbox
+    :param marker_pos: marker (strategy of point choice on bbox)
+    :return: point of bbox
     '''
     if marker_pos == Traceplace.LOWER_LEFT:
         return (int(row_dataframe['bb_y']),
@@ -54,8 +54,8 @@ def get_point(row_dataframe, marker_pos):
 
 def is_bbox_intersected(cur_bbox, other_bbox):
     '''
-    Check if bounding boxes are intersect
-    :return: True, if bounding boxes are intersect
+    Check if bboxes are intersect
+    :return: True, if bboxes are intersect
     '''
     bbox_y1 = cur_bbox['bb_y']
     bbox_y2 = cur_bbox['bb_y'] + cur_bbox['bb_h']

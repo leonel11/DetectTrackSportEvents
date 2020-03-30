@@ -24,7 +24,7 @@ class VideoPlayer(QMainWindow):
         super(VideoPlayer, self).__init__(parent)
         self.setWindowTitle('SportAISystem 1.0')
 
-        self.__filename = ''
+        self.__filename = '' # name of videofile
 
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface) # surface for showing videos
 
@@ -39,22 +39,25 @@ class VideoPlayer(QMainWindow):
 
         # Play button and its behaviour
         self.playButton = QPushButton()
-        self.playButton.setEnabled(False)
+        self.playButton.setEnabled(False) # hide button before the choice of any video
         self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playButton.clicked.connect(self.playVideo)
 
         # Stop button and its behaviour
         self.stopButton = QPushButton()
-        self.stopButton.setEnabled(False)
+        self.stopButton.setEnabled(False) # hide button before the choice of any video
         self.stopButton.setIcon(self.style().standardIcon(QStyle.SP_MediaStop))
         self.stopButton.clicked.connect(self.stopVideo)
 
         # Slider to visualize the duration of video
         self.positionSlider = QSlider(Qt.Horizontal)
-        self.positionSlider.setRange(0, 0)
+        self.positionSlider.setRange(0, 0) # set to start
         self.positionSlider.sliderMoved.connect(self.setPosition)
 
         # Create and adjust labels
+        self.errorLabel = QLabel('')
+        self.errorLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        # Labels for duration and total time of video
         self.durationLabel = QLabel()
         self.durationLabel.setText('--:--')
         self.durationLabel.setFixedSize(30, 20)
@@ -62,8 +65,6 @@ class VideoPlayer(QMainWindow):
         self.totalLabel = QLabel()
         self.totalLabel.setText('--:--')
         self.totalLabel.setFixedSize(30, 20)
-        self.errorLabel = QLabel('')
-        self.errorLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         # Statistics button and its behaviour
         self.statButton = QPushButton('Statistics')
@@ -71,7 +72,7 @@ class VideoPlayer(QMainWindow):
         self.statButton.clicked.connect(self.pressStatistics)
 
         # Tracker button and its behaviour
-        self.trackButton = QPushButton('ON')
+        self.trackButton = QPushButton('ON') # Turn ON the mode of traching video by means of JDE tracker
         self.trackButton.setCheckable(True)
         self.trackButton.setChecked(True)
         self.trackButton.setToolTip('JDE Tracker turned on')
@@ -143,7 +144,7 @@ class VideoPlayer(QMainWindow):
         self.__filename, _ = QFileDialog.getOpenFileName(self, 'Open videos', os.getcwd(),
                                                          'Videos (*.avi *mp4 *.wmv)')
         if self.__filename:
-            if self.trackButton.isChecked():
+            if self.trackButton.isChecked(): # JDE Tracker was turned ON
                 QApplication.setOverrideCursor(Qt.WaitCursor)
                 self.errorLabel.setText('Waiting for tracking the video')
                 #jde = MOTTracker(self.__filename, constants.GPU_NUMBER)
@@ -152,7 +153,7 @@ class VideoPlayer(QMainWindow):
                 self.errorLabel.setText('')
                 tracked_video = os.path.join(constants.RESULTS_FOLDER, self.__filename)
                 self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(tracked_video)))
-            else:
+            else: # JDE Tracker was turned OFF
                 self.errorLabel.setText('')
                 self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.__filename)))
             self.playButton.setEnabled(True)
@@ -176,6 +177,7 @@ class VideoPlayer(QMainWindow):
 
 
     def pressStatistics(self):
+        # Set markup file with saved information about bboxes, ids of humans on each frame of video
         markup = os.path.join(constants.RESULTS_FOLDER, os.path.splitext(os.path.basename(self.__filename))[0]+'.txt')
         if os.path.exists(markup):
             st = StatDialog(markup=markup)
@@ -186,9 +188,9 @@ class VideoPlayer(QMainWindow):
 
     def trackHumans(self):
         if self.trackButton.isChecked():
-            self.trackButton.setText('ON')
+            self.trackButton.setText('ON') # Turn ON tracker
         else:
-            self.trackButton.setText('OFF')
+            self.trackButton.setText('OFF') # Turn OFF tracker
 
 
     def showAboutDialog(self):
@@ -204,7 +206,7 @@ class VideoPlayer(QMainWindow):
         msg.exec()
 
 
-    def mediaStateChanged(self, state):
+    def mediaStateChanged(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
         else:

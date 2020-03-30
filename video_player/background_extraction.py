@@ -10,7 +10,7 @@ import constants
 
 def init_argparse():
     '''
-    Initializes argparse
+    Initialize argparse
     '''
     parser = argparse.ArgumentParser(description='Background extraction from the video')
     parser.add_argument(
@@ -39,16 +39,18 @@ def init_argparse():
 
 def get_cumulated_background(cap, total_frames, freq):
     '''
-    Get matrix of background extracted from the video using cumulated weights of frames
+    Get matrix of background extracted from the video using cumulated weights of all frames
     :param cap: captured video
     :param total_frames: total number of frames in the video
     :param freq: frequency of cumulating the weights of previous frames
     :return: cumulated background matrix
     '''
     cap.set(cv2.CAP_PROP_POS_FRAMES, 0) # set the position of video into its start
+    # Set first frame as the base of result
     res = None
-    _, frame = cap.read()
+    _, frame = cap.read() # extract the first frame from the video
     cumulated_frame = np.float32(frame)
+    # Cumulate next frames into result
     for fid in tqdm(range(1, int(total_frames))):
         cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
         _, frame = cap.read()
@@ -67,7 +69,7 @@ def get_calculated_background(cap, total_frames, freq, strategy):
     :param strategy: strategy of calculating the matrix of background
     :return: background matrix
     '''
-    # Get indices of frames wich wll be used for background extraction
+    # Get indices of randomly chosen frames which will be used for background extraction
     frame_indices = total_frames*np.random.uniform(size=freq) # random uniform rule
     # Collect the frames
     collected_frames = [] # storage of frames
@@ -96,11 +98,12 @@ def main():
     print('Amount of frames:\t{}'.format(total_frames))
     # Extract strategy
     strategy = args.strategy
+    # Validate strategy
     if strategy not in constants.BACKGROUND_STRATEGIES:
         print('Not available strategy! Please choose the right one:\t{}'.format(constants.BACKGROUND_STRATEGIES))
         sys.exit(1)
     print('Strategy of background extraction:\t{}'.format(strategy))
-    # Extract frequency
+    # Calculate and validate frequency
     if args.frequency <= 0:
         print('Not available value of frequency! Please choose the positive value...')
         sys.exit(1)
