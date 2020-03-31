@@ -68,6 +68,8 @@ Program for analysis of videos of sport events based on machine learning
 2. For Windows:
 
     [FFmpeg installation](https://ru.wikihow.com/установить-программу-FFmpeg-в-Windows)
+    
+3. It's possible to work with `virtualenv` environment of Python. You can create it after [Python](https://www.python.org/downloads/) installation, before [PyTorch](https://pytorch.org) installation. Also read this [article](https://python-guide-kr.readthedocs.io/ko/latest/dev/virtualenvs.html) which describes how to work with `virtualenv`.
 
 ## Docker
 
