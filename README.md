@@ -52,6 +52,8 @@ Program for analysis of videos of sport events based on machine learning
 
 5. Install all requirements (you can follow some instructions of installation using [Requirements](https://github.com/Zhongdao/Towards-Realtime-MOT#requirements) or [Issues](https://github.com/Zhongdao/Towards-Realtime-MOT/issues) in case of any problem)
 
+6. Copy file of weights JDE-1088x608 ([1](https://github.com/Zhongdao/Towards-Realtime-MOT#pretrained-model-and-baseline-models) or [2](https://drive.google.com/file/d/1nlnuYfGNuHWZztQHXwVZSL_FvfE551pA/view)) for running of MOT algorithm
+
 ## Advice
 
 1. For Ubuntu:

@@ -119,7 +119,7 @@ class CombatsCounter():
             ax.bar(np.arange(len(d)), list(d.values()), zorder=2)
             ax.set_xticks(np.arange(len(d)))
             ax.set_xticklabels(list(map(str, d.keys())))
-            ax.set_title('Covered distances by players')
+            ax.set_title('Combats for player {}'.format(self.__human))
             ax.set_ylabel('Pixels')
             # Save statistics about combats as a bar chart
             fig.savefig(os.path.join(self.__outdirectory, 'combats___human_{}.png'.format(self.__human)))
